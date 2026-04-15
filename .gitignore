@@ -1,0 +1,20 @@
+# --- R Specific ---
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user/
+.Rapp.history
+*.RData
+*.Rhistory
+*.Rproj.user
+
+# --- OS & IDE Specific ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# --- Temporary Files ---
+*.tmp
+*.temp
+*-temp.R
