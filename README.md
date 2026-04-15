@@ -3,6 +3,38 @@
 ## Overview
 This repository contains a modular R pipeline for processing and visualizing waterbird nesting data at Lake Urema. The analysis tracks colony health, species diversity, and spatial distribution using field counts and GPS trackways.
 
+```
+waterbird-nest-counts/
+├── data/
+│   ├── raw/                                    # Field-source files
+│   │   ├── 2026waterbirdNestCounts.xlsx        # Primary nest counts
+│   │   ├── historical_nest_counts.csv          # 2014-2025 monitoring records
+│   │   ├── nw_lobe.kml                         # Spatial boundary (North-West)
+│   │   ├── se_lobe.kml                         # Spatial boundary (South-East)
+│   │   ├── TRACKWAY1_going-in...gpx            # Survey phase 1 (Incoming)
+│   │   ├── TRACKWAY2_checking...gpx            # Survey phase 2 (Extent check)
+│   │   ├── TRACKWAY3_counting...gpx            # Survey phase 3 (Main count)
+│   │   ├── TRACKWAY4_counting...gpx            # Survey phase 4 (Return)
+│   │   └── waterdepth_LakeUrema.csv            # Bathymetry/Environmental data
+│   └── processed/                              # Script-generated outputs
+│       ├── 2026_cleaned_nest_data.csv          # Cleaned tidy version of Excel data
+│       ├── 2026_segmented_trackways.csv        # GPS points with velocity & phase ID
+│       ├── 2026_species_summary.csv            # Current season abundance/density
+│       └── historical_comparison_updated.csv   # Merged 2014-2026 dataset
+├── scripts/                                    # Modular analysis pipeline
+│   ├── 01_basic_stats.R                        # Data cleaning & historical merging
+│   ├── 02_figures.R                            # Trend & community diversity plots
+│   ├── 03_trackways.R                          # GPX processing & velocity analysis
+│   ├── 04_heatmap_general.R                    # Community-wide density modeling
+│   └── 05_heatmaps_per_species.R               # Automated species-specific mapping
+├── reports/                                    # Generated visual outputs
+│   ├── figures/                                # Plots (01-14) from Scripts 02, 03, & 04
+│   ├── heatmaps/                               # Species maps from Script 05
+│   └── photoshop-editables/                    # Plots with further aesthetical edits
+├── README.md                                   # Main project documentation
+└── waterbird_project.Rproj                     # R Project file
+```
+
 ## Analytical Pipeline
 
 ### 1. Data Processing (`01_basic_stats.R`)
