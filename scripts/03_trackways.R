@@ -142,13 +142,13 @@ fig_trackways_final <- wrap_plots(plot_list, ncol = 3) +
     title = "Colony Survey Dynamics in April 7, 2026",
     subtitle = "Spatially accurate tracks with movement velocity across 6 key phases"
   ) & 
-  theme(legend.position = "bottom", legend.key.width = unit(1.5, "cm"))
+  theme(legend.position = "right")
 
 # Export results
 write_csv(all_tracks_final, "data/processed/2026_segmented_trackways.csv")
 
 ggsave("reports/figures/13_trackways_speed.png", 
-       fig_trackways_final, width = 16, height = 12, scale = 0.5)
+       fig_trackways_final, width = 16, height = 10, scale = 0.6)
 
 message("Trackway processing complete. Data and Figure 13 saved.")
 
