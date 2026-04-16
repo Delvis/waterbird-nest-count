@@ -36,8 +36,8 @@ table_1_2026 <- clean_2026 %>%
 total_row <- data.frame(
   species_name   = "Total (all species)",
   no_of_nests    = sum(clean_2026$total_nests_tree),
-  no_of_trees    = n_distinct(clean_2026$tree),
-  nests_per_tree = round(sum(clean_2026$total_nests_tree) / n_distinct(clean_2026$tree), 2),
+  no_of_trees    = n_distinct(clean_2026$id),
+  nests_per_tree = round(sum(clean_2026$total_nests_tree) / n_distinct(clean_2026$id), 2),
   max_nests_tree = max(clean_2026$total_nests_tree)
 )
 
