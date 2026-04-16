@@ -19,8 +19,48 @@ track_sf <- all_tracks_final %>%
   mutate(time_numeric = as.numeric(time)) %>%
   arrange(time_numeric)
 
-forest_polygons <- st_cast(study_area_mask, "POLYGON")
-forest_centroids <- st_centroid(forest_polygons)
+# Ensure you load the specific lobes
+nw_poly <- st_read("data/raw/nw_lobe.kml") %>% st_make_valid() %>% st_union()
+se_poly <- st_read("data/raw/se_lobe.kml") %>% st_make_valid() %>% st_union()
+
+# NW Lobe is squarish: One central magnet is enough
+nw_magnet <- st_centroid(nw_poly)
+
+# SE Lobe is vertical: Split into 3 magnets using a bounding box split
+se_bbox <- st_bbox(se_poly)
+y_range <- seq(se_bbox$ymin, se_bbox$ymax, length.out = 4)
+
+# Create 3 magnets for the SE lobe: North, Mid, South
+# 1. Generate a dense sample of points inside the SE lobe
+# This avoids the topological 'crop' errors entirely
+se_points <- st_sample(se_poly, size = 1000, type = "regular") %>% 
+  st_as_sf() %>%
+  st_set_crs(4326)
+
+# 2. Add latitude (Y) to the points
+se_points_y <- se_points %>%
+  mutate(y = st_coordinates(.)[,2])
+
+# 3. Define the Y thresholds
+se_bbox <- st_bbox(se_poly)
+y_range <- seq(se_bbox$ymin, se_bbox$ymax, length.out = 4)
+
+# 4. Create the 3 magnets by averaging point clusters
+se_magnets_list <- list(
+  south = se_points_y %>% filter(y >= y_range[1], y < y_range[2]),
+  mid   = se_points_y %>% filter(y >= y_range[2], y < y_range[3]),
+  north = se_points_y %>% filter(y >= y_range[3], y <= y_range[4])
+)
+
+# Calculate centroids of these clusters (only if points exist)
+se_magnets <- map(se_magnets_list, function(cluster) {
+  if(nrow(cluster) > 0) return(st_centroid(st_union(cluster)))
+}) %>% 
+  compact() %>% 
+  do.call(c, .)
+
+# 5. Merge with the NW magnet
+all_magnets <- c(st_geometry(nw_magnet), se_magnets)
 
 # --- 2. SPECIES LOOP ---
 for (sp_code in names(species_map)) {
@@ -48,11 +88,16 @@ for (sp_code in names(species_map)) {
   # --- 4. SPATIAL DISPLACEMENT ---
   boat_coords <- st_coordinates(track_sf[mapping_df$idx, ])
   boat_sf <- st_as_sf(as.data.frame(boat_coords), coords = c("X", "Y"), crs = 4326)
-  nearest_forest_idx <- st_nearest_feature(boat_sf, forest_centroids)
-  forest_coords <- st_coordinates(forest_centroids[nearest_forest_idx, ])
   
-  displaced_x <- boat_coords[,1] + 0.25 * (forest_coords[,1] - boat_coords[,1])
-  displaced_y <- boat_coords[,2] + 0.25 * (forest_coords[,2] - boat_coords[,2])
+  # Find which specific magnet is closest to each boat observation
+  nearest_magnet_idx <- st_nearest_feature(boat_sf, all_magnets)
+  target_magnets <- all_magnets[nearest_magnet_idx]
+  mag_coords <- st_coordinates(target_magnets)
+  
+  # Calculate displacement: 50% of the way to the internal magnet
+  # This ensures it NEVER moves away from the forest
+  displaced_x <- boat_coords[,1] + 0.50 * (mag_coords[,1] - boat_coords[,1])
+  displaced_y <- boat_coords[,2] + 0.50 * (mag_coords[,2] - boat_coords[,2])
   
   # --- 5. GENERATE ABUNDANCE HEATMAP ---
   bbox <- st_bbox(track_sf)
@@ -102,5 +147,5 @@ for (sp_code in names(species_map)) {
     theme(panel.grid.major = element_line(color = "grey90", linetype = "dashed", linewidth = 0.2))
   
   fname <- str_replace_all(tolower(sp_name), " ", "_")
-  ggsave(paste0("reports/heatmaps/heatmap_", fname, ".png"), plot = fig, width = 16, height = 10, scale = 0.7)
+  ggsave(paste0("reports/heatmaps/heatmap__", fname, ".png"), plot = fig, width = 16, height = 10, scale = 0.7)
 }
