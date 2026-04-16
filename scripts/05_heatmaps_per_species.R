@@ -147,5 +147,5 @@ for (sp_code in names(species_map)) {
     theme(panel.grid.major = element_line(color = "grey90", linetype = "dashed", linewidth = 0.2))
   
   fname <- str_replace_all(tolower(sp_name), " ", "_")
-  ggsave(paste0("reports/heatmaps/heatmap__", fname, ".png"), plot = fig, width = 16, height = 10, scale = 0.7)
+  ggsave(paste0("reports/heatmaps/heatmap_", fname, ".png"), plot = fig, width = 16, height = 10, scale = 0.7)
 }
