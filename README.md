@@ -35,6 +35,20 @@ waterbird-nest-counts/
 └── waterbird_project.Rproj                     # R Project file
 ```
 
+## Field Methodology
+
+The 2026 Waterbird Nest Count at Lake Urema was conducted by three pairs of field researchers. To ensure data integrity and minimize inter-observer bias, each pair consisted of a consistent **Birdwatcher (Observer)** and a **Data Logger (Recorder)** throughout the survey period (April 7th 2026).
+
+| Birdwatcher (Observer) | Data Logger (Recorder) |
+| :--- | :--- |
+| Test Malunga | João d'Oliveira Coelho |
+| José Montinho | Sofia Nhalungo |
+| Dadzie Tarua | Leonel Martins |
+
+**Technical Specifications:**
+* **Protocol:** Real-time timestamping paired with boat GPS trackways for spatial matching.
+* **Hardware:** Digital entry of important observations, and trackways, via Gaia GPS on iPhone 14.
+
 ## Analytical Pipeline
 
 ### 1. Data Processing (`01_basic_stats.R`)
@@ -175,5 +189,5 @@ install.packages(c("readxl", "tidyverse", "janitor", "ggthemes", "ggrepel",
                    "ggspatial", "spatstat", "stars"))
 ```
 
-## Author
+## R Project Developer & Statistician
 João d'Oliveira Coelho (2026)
