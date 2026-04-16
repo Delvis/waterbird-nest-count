@@ -22,6 +22,7 @@ waterbird-nest-counts/
 │       ├── 2026_species_summary.csv            # Current season abundance/density
 │       └── historical_comparison_updated.csv   # Merged 2014-2026 dataset
 ├── scripts/                                    # Modular analysis pipeline
+│   ├── 00_helper_loader.R                      # Loading objects needed in all scripts
 │   ├── 01_basic_stats.R                        # Data cleaning & historical merging
 │   ├── 02_figures.R                            # Trend & community diversity plots
 │   ├── 03_trackways.R                          # GPX processing & velocity analysis

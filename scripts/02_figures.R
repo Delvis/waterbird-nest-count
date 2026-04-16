@@ -18,20 +18,7 @@ library(scales)
 summary_2026   <- read_csv("data/processed/2026_species_summary.csv")
 full_data      <- read_csv("data/processed/historical_comparison_updated.csv")
 
-species_colors <- c(
-  "African darter"           = "#1abc9c", 
-  "Reed cormorant"           = "#2ecc71", 
-  "White-breasted cormorant" = "#3498db", 
-  "Openbill stork"           = "#9b59b6", 
-  "Yellow-billed stork"      = "#f1c40f", 
-  "Great egret"              = "#e67e22", 
-  "Yellow-billed egret"      = "#e74c3c", 
-  "Sacred ibis"              = "#34495e", 
-  "Grey heron"               = "#95a5a6", 
-  "African spoonbill"        = "#e84393", 
-  "Black-headed heron"       = "black", 
-  "Total"                    = "#2c3e50"
-)
+source("scripts/00_helper_loader.R")
 
 hist_long <- full_data %>%
   pivot_longer(cols = -Year, names_to = "species", values_to = "nests")
@@ -266,9 +253,13 @@ fig_strategy <- species_only %>%
            color = "#7f8c8d", size = 3.8, fontface = "italic") +
   geom_point(size = 5, alpha = 0.8) +
   geom_text_repel(aes(label = species_name), 
-                  box.padding = 0.5, 
-                  max.overlaps = 12, 
+                  force = 5,
+                  point.padding = 0.8,
+                  box.padding = 0.8, 
+                  direction = "both",
+                  max.overlaps = 20, 
                   fontface = "bold",
+                  size = 3.5, # Slightly smaller text can also prevent touching
                   show.legend = FALSE) +
   scale_color_manual(values = species_colors) +
   theme_minimal() +

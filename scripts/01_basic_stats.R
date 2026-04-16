@@ -7,45 +7,11 @@
 # ==============================================================================
 
 # 1. LOAD LIBRARIES ------------------------------------------------------------
-library(readxl)
 library(tidyverse)
+library(readxl)
 library(janitor)
 library(lubridate)
-
-# 2. CONFIGURATION & SPECIES MAPPING -------------------------------------------
-# Mapping code names to full taxonomic/common names for reporting
-species_map <- c(
-  "darter"            = "African darter",
-  "reed_corm"         = "Reed cormorant",
-  "wb_corm"           = "White-breasted cormorant",
-  "openbill"          = "Openbill stork",
-  "yb_stork"          = "Yellow-billed stork",
-  "great_egret"       = "Great egret",
-  "yb_egret"          = "Yellow-billed egret",
-  "s_ibis"            = "Sacred ibis",
-  "grey_heron"        = "Grey heron",
-  "african_spoonbill" = "African spoonbill"
-)
-
-# 3. DATA INGESTION & CLEANING -------------------------------------------------
-raw_2026 <- read_excel("data/raw/2026waterbirdNestCounts.xlsx", sheet = "Sheet1") %>%
-  clean_names()
-
-clean_2026 <- raw_2026 %>%
-  mutate(
-    # Fix the Excel 1899 epoch timestamp issue
-    time_string = format(time, "%H:%M:%S"),
-    date_string = format(date, "%Y-%m-%d"),
-    timestamp   = ymd_hms(paste(date_string, time_string)),
-    
-    # Ensure all species columns are numeric and NAs are treated as zero
-    across(all_of(names(species_map)), ~replace_na(as.numeric(.), 0))
-  ) %>%
-  select(-time_string, -date_string) %>% 
-  rowwise() %>%
-  # Calculate total nests per tree across all mapped species
-  mutate(total_nests_tree = sum(c_across(all_of(names(species_map))))) %>%
-  ungroup()
+source("scripts/00_helper_loader.R")
 
 # 4. GENERATE TABLE 1: 2026 SPECIES SUMMARY ------------------------------------
 table_1_2026 <- clean_2026 %>%
