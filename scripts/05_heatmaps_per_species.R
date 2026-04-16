@@ -108,9 +108,9 @@ for (sp_code in names(species_map)) {
   jitter_y <- displaced_y + rnorm(length(displaced_y), 0, 0.00005)
   
   ppp_obs <- ppp(jitter_x, jitter_y, window = win, marks = mapping_df$nest_count)
-  dens <- density(ppp_obs, sigma = 0.0008, weights = marks(ppp_obs), dimyx = 800)
+  dens <- density(ppp_obs, sigma = 0.0006, weights = marks(ppp_obs), dimyx = 800)
   dens$v <- dens$v / max(dens$v, na.rm = TRUE)
-  
+  dens$v <- dens$v ^ 0.5 # Goldilocks: sqrt(), which is a power of 0.5
   dens_stars <- st_as_stars(dens)
   st_crs(dens_stars) <- 4326
   
