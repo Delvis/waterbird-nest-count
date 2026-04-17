@@ -49,7 +49,7 @@ fig_species_trends <- hist_long %>%
   scale_color_manual(values = species_colors) +
   theme_minimal() +
   theme(strip.text = element_text(face = "bold")) +
-  labs(title = "Species-Specific Nesting Trends (2014-2016)",
+  labs(title = "Species-Specific Nesting Trends (2014-2026)",
        y = "Number of Nests", x = "Year")
 
 # Figure 3: Species Composition
