@@ -147,7 +147,7 @@ fig_heatmap <- hist_long %>%
   geom_tile(color = "white", size = 0.5) +
   scale_fill_manual(values = c("Present" = "#1abc9c", "Absent" = "#ecf0f1")) +
   theme_minimal() +
-  theme(panel.grid = element_blank()) +
+  theme(panel.grid = element_blank(), legend.position = "bottom") +
   labs(x = "Year", y = "", fill = "Status")
 
 # Figure 8: Community Clusters
@@ -277,7 +277,7 @@ ggsave("reports/figures-portrait/01_total_trend.png", fig_total_trend, width = 1
 ggsave("reports/figures-portrait/02_species_trends_faceted.png", fig_species_trends, width = 8.5, height = 11, scale = 0.6)
 ggsave("reports/figures-portrait/03_composition_years.png", fig_composition, width = 8.5, height = 11, scale = 0.6)
 ggsave("reports/figures-portrait/04_2026_ranked_abundance.png", fig_2026_ranked, width = 8.5, height = 11, scale = 0.6)
-ggsave("reports/figures-portrait/05_growth_comparison.png", fig_growth, width = 12, height = 9, scale = 0.6) # worst in portrait
+ggsave("reports/figures-portrait/05_growth_comparison.png", fig_growth, width = 13, height = 9, scale = 0.6) # worst in portrait
 ggsave("reports/figures-portrait/06_community_diversity.png", fig_diversity, width = 8.5, height = 11, scale = 0.6)
 ggsave("reports/figures-portrait/07_presence_matrix.png", fig_heatmap, width = 8.5, height = 11, scale = 0.6)
 ggsave("reports/figures-portrait/08_year_clusters.png", fig_cluster, width = 8.5, height = 11, scale = 0.6)
