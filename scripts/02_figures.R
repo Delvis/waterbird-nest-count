@@ -12,6 +12,7 @@ library(ggthemes)
 library(ggrepel)
 library(ggdendro)
 library(scales)
+library(ggtext)
 
 # 2. DATA INGESTION & COLORS ---------------------------------------------------
 # Load the standardized files from Script 01
@@ -144,18 +145,46 @@ fig_diversity <- full_data %>%
        subtitle = "Higher values indicate a more balanced/diverse community",
        y = "Diversity Index", x = "Year")
 
-# Figure 7: Presence/Absence Matrix
-fig_heatmap <- hist_long %>%
-  filter(species != "Total") %>%
-  mutate(present = ifelse(nests > 0, "Present", "Absent")) %>%
-  ggplot(aes(x = factor(Year), y = species, fill = present)) +
+# Figure 7: Presence & Ramsar Status Matrix
+source("scripts/06_ramsar_prep.R")
+
+fig_heatmap <- ggplot(ramsar_matrix_data, aes(x = factor(Year), y = species, fill = status)) +
+  # Main matrix tiles
   geom_tile(color = "white", size = 0.5) +
-  scale_fill_manual(values = c("Present" = "#1abc9c", "Absent" = "#ecf0f1")) +
+  
+  # Add the official 1% Threshold values as a text "column" at the end
+  geom_text(data = threshold_labels, 
+            aes(x = "Threshold", y = species, label = label),
+            inherit.aes = FALSE, # Prevent it from looking for 'status' or 'fill'
+            size = 3.5, fontface = "bold", color = "#2c3e50") +
+  
+  # Define colors
+  scale_fill_manual(values = c(
+    "Passes 1% Threshold" = "#1abc9c", # Turquoise
+    "Present"             = "#2c3e50", # Midnight
+    "Absent"              = "#ecf0f1"  # Clouds
+  )) +
+  
+  # Add a vertical line to separate the data from the threshold column
+  geom_vline(xintercept = n_distinct(ramsar_matrix_data$Year) + 0.5, 
+             color = "grey70", linetype = "dashed") +
+  
   theme_minimal() +
-  theme(panel.grid = element_blank()) +
-  labs(title = "Presence/Absence Matrix (2014-2026)",
-       subtitle = "Visualizing consistency and new arrivals in the Urema colony",
-       x = "Year", y = "", fill = "Status")
+  theme(
+    panel.grid = element_blank(),
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    legend.position = "bottom",
+    plot.title = element_text(face = "bold"),
+    plot.subtitle = element_markdown(lineheight = 1.2)
+  ) +
+  labs(
+    title = "Species Consistency & International Conservation Significance (2014-2026)",
+    subtitle = "Species highlighted meet the *Ramsar Convention on Wetlands* threshold (1% of regional population)",
+    x = "", # Removed "Year" label as the X-axis is now mixed
+    y = "", 
+    fill = "Status"
+  )
+
 
 # Figure 8: Community Clusters
 # This shows if 2026 was a "normal" year or a total outlier in terms of community makeup.

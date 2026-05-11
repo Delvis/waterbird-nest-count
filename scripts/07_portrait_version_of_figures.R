@@ -1,6 +1,6 @@
 # ==============================================================================
 # Project: Lake Urema Waterbird Nest Counting 2026
-# Script: 02_figures.R
+# Script: 08_portrait_version_of_figures.R
 # Description: Full suite of visualizations for the 2026 survey, covering 
 #              historical trends, diversity indices, and nesting strategies.
 # Author: João d'Oliveira Coelho
@@ -140,15 +140,40 @@ fig_diversity <- full_data %>%
   labs(y = "Diversity Index", x = "Year")
 
 # Figure 7: Presence/Absence Matrix
-fig_heatmap <- hist_long %>%
-  filter(species != "Total") %>%
-  mutate(present = ifelse(nests > 0, "Present", "Absent")) %>%
-  ggplot(aes(x = factor(Year), y = species, fill = present)) +
+source("scripts/06_ramsar_prep.R")
+
+fig_heatmap <- ggplot(ramsar_matrix_data, aes(x = factor(Year), y = species, fill = status)) +
+  # Main matrix tiles
   geom_tile(color = "white", size = 0.5) +
-  scale_fill_manual(values = c("Present" = "#1abc9c", "Absent" = "#ecf0f1")) +
+  
+  # Add the official 1% Threshold values as a text "column" at the end
+  geom_text(data = threshold_labels, 
+            aes(x = "Threshold", y = species, label = label),
+            inherit.aes = FALSE, # Prevent it from looking for 'status' or 'fill'
+            size = 3.5, fontface = "bold", color = "#2c3e50") +
+  
+  # Define colors
+  scale_fill_manual(values = c(
+    "Passes 1% Threshold" = "#1abc9c", # Turquoise
+    "Present"             = "#2c3e50", # Midnight
+    "Absent"              = "#ecf0f1"  # Clouds
+  )) +
+  
+  # Add a vertical line to separate the data from the threshold column
+  geom_vline(xintercept = n_distinct(ramsar_matrix_data$Year) + 0.5, 
+             color = "grey70", linetype = "dashed") +
+  
   theme_minimal() +
-  theme(panel.grid = element_blank(), legend.position = "bottom") +
-  labs(x = "Year", y = "", fill = "Status")
+  theme(
+    panel.grid = element_blank(),
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    legend.position = "bottom"
+  ) +
+  labs(
+    x = "", # Removed "Year" label as the X-axis is now mixed
+    y = "", 
+    fill = "Status"
+  )
 
 # Figure 8: Community Clusters
 # This shows if 2026 was a "normal" year or a total outlier in terms of community makeup.
@@ -279,7 +304,7 @@ ggsave("reports/figures-portrait/03_composition_years.png", fig_composition, wid
 ggsave("reports/figures-portrait/04_2026_ranked_abundance.png", fig_2026_ranked, width = 8.5, height = 11, scale = 0.6)
 ggsave("reports/figures-portrait/05_growth_comparison.png", fig_growth, width = 13, height = 9, scale = 0.6) # worst in portrait
 ggsave("reports/figures-portrait/06_community_diversity.png", fig_diversity, width = 8.5, height = 11, scale = 0.6)
-ggsave("reports/figures-portrait/07_presence_matrix.png", fig_heatmap, width = 8.5, height = 11, scale = 0.6)
+ggsave("reports/figures-portrait/07_presence_matrix.png", fig_heatmap, width = 11, height = 11, scale = 0.6)
 ggsave("reports/figures-portrait/08_year_clusters.png", fig_cluster, width = 8.5, height = 11, scale = 0.6)
 ggsave("reports/figures-portrait/09_density_per_species_2026.png", fig_density_2026, width = 8.5, height = 11, scale = 0.6)
 ggsave("reports/figures-portrait/10_max_load_2026.png", fig_max_load, width = 8.5, height = 11, scale = 0.6)

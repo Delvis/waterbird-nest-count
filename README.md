@@ -11,6 +11,7 @@ waterbird-nest-counts/
 │   │   ├── historical_nest_counts.csv          # 2014-2025 monitoring records
 │   │   ├── nw_lobe.kml                         # Spatial boundary (North-West)
 │   │   ├── se_lobe.kml                         # Spatial boundary (South-East)
+│   │   ├── RamsarCriteria2026.csv              # Wetland Convention Thresholds
 │   │   ├── TRACKWAY1_going-in...gpx            # Survey phase 1 (Incoming)
 │   │   ├── TRACKWAY2_checking...gpx            # Survey phase 2 (Extent check)
 │   │   ├── TRACKWAY3_counting...gpx            # Survey phase 3 (Main count)
@@ -27,9 +28,12 @@ waterbird-nest-counts/
 │   ├── 02_figures.R                            # Trend & community diversity plots
 │   ├── 03_trackways.R                          # GPX processing & velocity analysis
 │   ├── 04_heatmap_general.R                    # Community-wide density modeling
-│   └── 05_heatmaps_per_species.R               # Automated species-specific mapping
+│   ├── 05_heatmaps_per_species.R               # Automated species-specific mapping
+│   ├── 06_ramsar_prep.R                        # Ramsar threshold calculations
+│   └── 07_portrait_version_of_figures.R        # Publication-ready, no titles
 ├── reports/                                    # Generated visual outputs
 │   ├── figures/                                # Plots (01-14) from Scripts 02, 03, & 04
+│   ├── figures-portrait/                       # Plots (01-12) from Scripts 07
 │   ├── heatmaps/                               # Species maps from Script 05
 │   └── photoshop-editables/                    # Plots with further aesthetical edits
 ├── README.md                                   # Main project documentation
